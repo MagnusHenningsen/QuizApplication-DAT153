@@ -8,7 +8,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class newImage extends AppCompatActivity {
     private Choice choice;
@@ -20,10 +22,16 @@ public class newImage extends AppCompatActivity {
         Button submit = findViewById(R.id.buttonSubmit);
         submit.setOnClickListener(view -> {
             Intent returnIntent = new Intent();
+            EditText nameText = findViewById(R.id.nameInput);
+            choice.setName(nameText.getText().toString());
             if (choice != null) {
-                returnIntent.putExtra("uri", choice.getUri()); // Attach your choice object
-                returnIntent.putExtra("name", choice.getName());
-                setResult(Activity.RESULT_OK, returnIntent);
+                if (choice.getName().isEmpty()) {
+                    Toast.makeText(this, "Name is required!", Toast.LENGTH_LONG);
+                } else {
+                    returnIntent.putExtra("uri", choice.getUri()); // Attach your choice object
+                    returnIntent.putExtra("name", choice.getName());
+                    setResult(Activity.RESULT_OK, returnIntent);
+                }
             } else {
                 setResult(Activity.RESULT_CANCELED, returnIntent); // Indicate failure
             }

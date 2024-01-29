@@ -14,52 +14,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private List<Uri> images;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.images = new ArrayList<>();
-        addImageResourceToList(R.drawable.dog1);
-        addImageResourceToList(R.drawable.dog2);
-        addImageResourceToList(R.drawable.dog3);
-        RecyclerView recyclerView = findViewById(R.id.imagesRecyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 3)); // 3 columns
-
-
-        recyclerView.setAdapter(new MyAdapter(images)); // 'images' is your data source
-        Button addBtn = this.findViewById(R.id.buttonAdd);
-        addBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(this, newImage.class);
-            startActivityForResult(intent, 101);
+        Button galleryBtn = findViewById(R.id.buttonGallery);
+        galleryBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(this, Gallery.class);
+            startActivity(intent);
         });
-    }
-    private void addImageResourceToList(int imageResourceId) {
-        Uri imageUri = new Uri.Builder()
-                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE) // "android.resource"
-                .authority(getResources().getResourcePackageName(imageResourceId))
-                .appendPath(getResources().getResourceTypeName(imageResourceId))
-                .appendPath(getResources().getResourceEntryName(imageResourceId))
-                .build();
-        images.add(imageUri);
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 101 && resultCode == RESULT_OK) {
-            String resultString = data.getStringExtra("name");
-
-            // Retrieve the Uri data
-            Uri resultUri = data.getParcelableExtra("uri");
-            Choice choice = new Choice(resultUri, resultString);
-            images.add(choice.getUri());
-            RecyclerView recyclerView = findViewById(R.id.imagesRecyclerView);
-            recyclerView.setLayoutManager(new GridLayoutManager(this, 3)); // 3 columns
-
-
-            recyclerView.setAdapter(new MyAdapter(images)); // 'images' is your data source
-
-        }
+        Button quizBtn = findViewById(R.id.buttonQuiz);
+        quizBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(this, Quiz.class);
+            startActivity(intent);
+        });
     }
 }
