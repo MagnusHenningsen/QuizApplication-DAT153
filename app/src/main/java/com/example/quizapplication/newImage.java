@@ -12,8 +12,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.quizapplication.DataTypes.Choice;
+
 public class newImage extends AppCompatActivity {
     private Choice choice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,19 +26,25 @@ public class newImage extends AppCompatActivity {
         submit.setOnClickListener(view -> {
             Intent returnIntent = new Intent();
             EditText nameText = findViewById(R.id.nameInput);
-            choice.setName(nameText.getText().toString());
+
             if (choice != null) {
-                if (choice.getName().isEmpty()) {
-                    Toast.makeText(this, "Name is required!", Toast.LENGTH_LONG);
+                choice.setName(nameText.getText().toString());
+                if (choice.getName() == null || choice.getName().isEmpty() || choice.getName().equals("")) {
+                    Toast.makeText(this, "Name is required!", Toast.LENGTH_LONG).show();
+
+                } else if (choice.getName().length() < 3) {
+                    Toast.makeText(this, "Name must be atleast 3 characters!", Toast.LENGTH_LONG).show();
                 } else {
-                    returnIntent.putExtra("uri", choice.getUri()); // Attach your choice object
+                    returnIntent.putExtra("uri", choice.getUri());
                     returnIntent.putExtra("name", choice.getName());
                     setResult(Activity.RESULT_OK, returnIntent);
+                    finish();
                 }
             } else {
-                setResult(Activity.RESULT_CANCELED, returnIntent); // Indicate failure
+                setResult(Activity.RESULT_CANCELED, returnIntent);
+                finish();
             }
-            finish(); // Close the activity and return to the parent
+
         });
     }
 
@@ -43,8 +52,9 @@ public class newImage extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*"); // Use image/* for images of any type.
-        startActivityForResult(intent, 42);
+        startActivityForResult(intent, 42, null);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
@@ -56,10 +66,11 @@ public class newImage extends AppCompatActivity {
                 uri = resultData.getData();
                 // Use the URI to access the document, for example, to display the image
                 displayImage(uri);
-                choice = new Choice(uri, "test");
+                choice = new Choice(uri, null);
             }
         }
     }
+
     private void displayImage(Uri uri) {
         ImageView iv = findViewById(R.id.imageView2);
         iv.setImageURI(uri);
