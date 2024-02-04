@@ -15,16 +15,16 @@
         android:theme="@style/Base.Theme.QuizApplication"
         tools:targetApi="31">
         <activity
-            android:name=".Quiz"
+            android:name=".Activities.Quiz"
             android:exported="false" />
         <activity
-            android:name=".Gallery"
+            android:name=".Activities.Gallery"
             android:exported="false" />
         <activity
-            android:name=".newImage"
+            android:name=".Activities.newImage"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

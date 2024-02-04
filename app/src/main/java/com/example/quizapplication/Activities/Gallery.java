@@ -1,11 +1,9 @@
-package com.example.quizapplication;
+package com.example.quizapplication.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,9 +12,9 @@ import android.widget.Button;
 
 import com.example.quizapplication.Adapters.MyAdapter;
 import com.example.quizapplication.DataTypes.Choice;
+import com.example.quizapplication.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Gallery extends AppCompatActivity {
 

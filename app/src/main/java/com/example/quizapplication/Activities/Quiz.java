@@ -1,4 +1,4 @@
-package com.example.quizapplication;
+package com.example.quizapplication.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.quizapplication.DataTypes.Choice;
+import com.example.quizapplication.R;
 
 import java.util.ArrayList;
 import java.util.Random;
