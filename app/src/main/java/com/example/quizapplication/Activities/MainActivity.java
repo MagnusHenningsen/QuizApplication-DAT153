@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.quizapplication.DataTypes.Choice;
 import com.example.quizapplication.R;
@@ -31,9 +32,17 @@ public class MainActivity extends AppCompatActivity {
         });
         Button quizBtn = findViewById(R.id.buttonQuiz);
         quizBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(this, Quiz.class);
-            intent.putParcelableArrayListExtra("choices", choices);
-            startActivity(intent);
+            if (choices.size() >= 3) {
+                Intent intent = new Intent(this, Quiz.class);
+                intent.putParcelableArrayListExtra("choices", choices);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "There isn't enough items in the gallery to play!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this, Gallery.class);
+                intent.putParcelableArrayListExtra("choices", choices);
+                startActivityForResult(intent, GALLERY_REQUEST_CODE);
+
+            }
         });
     }
     private void initiateGallery() {

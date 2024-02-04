@@ -15,10 +15,24 @@ import com.example.quizapplication.DataTypes.Choice;
 import com.example.quizapplication.R;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Gallery extends AppCompatActivity {
 
     private ArrayList<Choice> choices = new ArrayList<Choice>();
+    private Consumer<Choice> removeItem = new Consumer<Choice>() {
+        @Override
+        public void accept(Choice c) {
+            choices.remove(c);
+            updateChoices();
+        }
+    };
+    private void updateChoices() {
+        Intent returnIntent = new Intent();
+        returnIntent.putParcelableArrayListExtra("UpdatedChoices", choices);
+        setResult(RESULT_OK, returnIntent);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,13 +43,18 @@ public class Gallery extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.imagesRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3)); // 3 columns
 
-
-        recyclerView.setAdapter(new MyAdapter(choices));
+        MyAdapter adapter = new MyAdapter(choices, removeItem);
+        Button sortBtn = this.findViewById(R.id.sortBtn);
+        sortBtn.setOnClickListener(v -> {
+            adapter.Sort();
+        });
+        recyclerView.setAdapter(adapter);
         Button addBtn = this.findViewById(R.id.buttonAdd);
         addBtn.setOnClickListener(view -> {
             Intent intent = new Intent(this, newImage.class);
             startActivityForResult(intent, 101);
         });
+
     }
 
     @Override
@@ -56,14 +75,13 @@ public class Gallery extends AppCompatActivity {
 
                 Choice choice = new Choice(resultUri, resultString);
                 choices.add(choice);
-                Intent returnIntent = new Intent();
-                returnIntent.putParcelableArrayListExtra("UpdatedChoices", choices);
-                setResult(RESULT_OK, returnIntent);
+                updateChoices();
             }
             RecyclerView recyclerView = findViewById(R.id.imagesRecyclerView);
             recyclerView.setLayoutManager(new GridLayoutManager(this, 3)); // 3 columns
-            recyclerView.setAdapter(new MyAdapter(choices)); // update images
+            recyclerView.setAdapter(new MyAdapter(choices, removeItem)); // update images
 
         }
     }
+
 }
