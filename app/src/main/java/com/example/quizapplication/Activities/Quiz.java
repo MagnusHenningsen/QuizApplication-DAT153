@@ -82,6 +82,7 @@ public class Quiz extends AppCompatActivity {
             public void onFinish() { // increment rounds played, save to history and start next round
                 RoundsPlayed++;
                 SaveHistory();
+                playSound(false);
                 pb.setProgress(300);
                 progress.set(0);
                 play();
