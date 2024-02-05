@@ -37,6 +37,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             this.choices.sort((x, y) -> x.getName().compareTo(y.getName()));
             Ascending = true;
         }
+        for (int i = 0; i < choices.size(); i++) {
+            choices.get(i).setIndex(i);
+        }
         notifyDataSetChanged();
     }
     @Override
@@ -55,8 +58,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             builder.setMessage("Are you sure you want to remove this choice?");
             builder.setPositiveButton("Yes", (dialog, which) -> {
                 choices.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, choices.size());
+                notifyDataSetChanged();
                 this.func.accept(choice);
             });
             builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());

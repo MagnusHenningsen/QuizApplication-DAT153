@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Button;
 
 import com.example.quizapplication.Adapters.MyAdapter;
+import com.example.quizapplication.ApplicationContext;
 import com.example.quizapplication.DataTypes.Choice;
 import com.example.quizapplication.R;
 
@@ -21,31 +22,41 @@ import java.util.function.Function;
 public class Gallery extends AppCompatActivity {
 
     private ArrayList<Choice> choices = new ArrayList<Choice>();
+    private ApplicationContext appCon;
+    private MyAdapter adapter;
     private Consumer<Choice> removeItem = new Consumer<Choice>() {
         @Override
         public void accept(Choice c) {
+            /*
             choices.remove(c);
             updateChoices();
+             */
+            appCon.removeFromList(c);
+            choices = appCon.getList();
+            // adapter.notifyDataSetChanged();
+            adapter.notifyItemRemoved(c.getIndex());
         }
     };
+    /*
     private void updateChoices() {
         Intent returnIntent = new Intent();
         returnIntent.putParcelableArrayListExtra("UpdatedChoices", choices);
         setResult(RESULT_OK, returnIntent);
     }
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
-        choices = getIntent().getParcelableArrayListExtra("choices");
-
-        Log.i("info", ""+choices.size());
+        appCon = (ApplicationContext) getApplicationContext();
+        choices = appCon.getList();
         RecyclerView recyclerView = findViewById(R.id.imagesRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3)); // 3 columns
 
-        MyAdapter adapter = new MyAdapter(choices, removeItem);
+        adapter = new MyAdapter(choices, removeItem);
         Button sortBtn = this.findViewById(R.id.sortBtn);
         sortBtn.setOnClickListener(v -> {
+            adapter.notifyDataSetChanged();
             adapter.Sort();
         });
         recyclerView.setAdapter(adapter);
@@ -66,20 +77,28 @@ public class Gallery extends AppCompatActivity {
 
             if (requestCode == 101 && resultCode == RESULT_OK) {
                 // Create the new choice object
+                /*
                 String resultString = data.getStringExtra("name");
                 Uri resultUri = data.getParcelableExtra("uri");
+
                 // Persistable permission
                 if (resultUri != null) {
                     getContentResolver().takePersistableUriPermission(resultUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 }
 
                 Choice choice = new Choice(resultUri, resultString);
+
                 choices.add(choice);
                 updateChoices();
+                 */
+               // adapter.notifyDataSetChanged();
             }
             RecyclerView recyclerView = findViewById(R.id.imagesRecyclerView);
             recyclerView.setLayoutManager(new GridLayoutManager(this, 3)); // 3 columns
-            recyclerView.setAdapter(new MyAdapter(choices, removeItem)); // update images
+            this.choices = appCon.getList();
+            adapter = new MyAdapter(choices, removeItem);
+
+            recyclerView.setAdapter(adapter); // update images
 
         }
     }

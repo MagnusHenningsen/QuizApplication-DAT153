@@ -12,10 +12,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.quizapplication.ApplicationContext;
 import com.example.quizapplication.DataTypes.Choice;
 import com.example.quizapplication.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 public class Quiz extends AppCompatActivity {
@@ -26,13 +28,17 @@ public class Quiz extends AppCompatActivity {
     private int RoundsPlayed = 0;
     private int RoundsWon = 0;
     private Random rnd = new Random();
+    private ApplicationContext appCon;
     private static final String played_text = "Games played: ";
     private static final String won_text = "Games won: ";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
-        choices = getIntent().getParcelableArrayListExtra("choices");
+        //choices = getIntent().getParcelableArrayListExtra("choices");
+
+        appCon = (ApplicationContext) getApplicationContext();
+        choices = appCon.getList();
         SharedPreferences pref = this.getSharedPreferences("history", MODE_PRIVATE);
         RoundsPlayed = pref.getInt("played", 0);
         RoundsWon = pref.getInt("won", 0);
@@ -49,6 +55,19 @@ public class Quiz extends AppCompatActivity {
         });
         option3.setOnClickListener(v -> {
             RegisterAnswer(v, option3, btns, this);
+        });
+        Button reset = findViewById(R.id.resetBtn);
+        reset.setOnClickListener(v -> {
+            RoundsPlayed = 0;
+            RoundsWon = 0;
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putInt("played", RoundsPlayed);
+            editor.putInt("won", RoundsWon);
+            editor.apply();
+            TextView played = findViewById(R.id.playedCounter);
+            TextView won = findViewById(R.id.wonCounter);
+            played.setText(played_text + RoundsPlayed);
+            won.setText(won_text + RoundsWon);
         });
         play();
 
@@ -108,32 +127,33 @@ public class Quiz extends AppCompatActivity {
 
 
     private void setOptions(Choice current) {
-        ArrayList<Integer> optionsSet = new ArrayList<>();
+        ArrayList<String> optionsSet = new ArrayList<>();
         int attempts = 0;
-        while (optionsSet.size() < 2) {
-            int randomIndex = rnd.nextInt(choices.size());
-            if (randomIndex != current.getIndex() && !optionsSet.contains(randomIndex)) {
-                optionsSet.add(randomIndex);
+
+        // Add the index of the correct answer to ensure it's not selected as an incorrect option
+        optionsSet.add(current.getName());
+
+        while (optionsSet.size() < 3) { // Now we need 3 unique options including the correct one
+            int randomIndex = rnd.nextInt(appCon.getList().size());
+            Choice r = choices.get(randomIndex);
+            if (!optionsSet.contains(r.getName())) {
+                optionsSet.add(r.getName());
                 attempts++;
-                Log.i("attempt", attempts+ "" );
+                Log.i("attempt", attempts + "");
             }
         }
 
-        int correctIndex = rnd.nextInt(3);
+        Collections.shuffle(optionsSet); // Shuffle the list to randomize the position of the correct answer
+
         Button option1 = findViewById(R.id.option1);
         Button option2 = findViewById(R.id.option2);
         Button option3 = findViewById(R.id.option3);
 
         // Assign texts to buttons
-        if (option1 != null && option2 != null && option3 != null) {
-            Button[] buttons = {option1, option2, option3};
-            for (int i = 0, j = 0; i < buttons.length; i++) {
-                if (i == correctIndex) {
-                    buttons[i].setText(current.getName()); // Set correct answer
-                } else {
-                    buttons[i].setText(choices.get(optionsSet.get(j++)).getName()); // Set other options
-                }
-            }
+        Button[] buttons = {option1, option2, option3};
+        for (int i = 0; i < buttons.length; i++) {
+            // Set the text for each button. The correct answer is already included in optionsSet.
+            buttons[i].setText(optionsSet.get(i));
         }
     }
 }

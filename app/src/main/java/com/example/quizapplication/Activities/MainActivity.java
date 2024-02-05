@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.quizapplication.ApplicationContext;
 import com.example.quizapplication.DataTypes.Choice;
 import com.example.quizapplication.R;
 
@@ -17,34 +18,38 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     ArrayList<Choice> choices = new ArrayList<Choice>();
-    private final int GALLERY_REQUEST_CODE = 1;
+    // private final int GALLERY_REQUEST_CODE = 1;
     // private final int QUIZ_REQUEST_CODE = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button galleryBtn = findViewById(R.id.buttonGallery);
-        initiateGallery();
+         // initiateGallery();
+        choices = ((ApplicationContext) getApplicationContext()).getList();
+
         galleryBtn.setOnClickListener(view -> {
             Intent intent = new Intent(this, Gallery.class);
-            intent.putParcelableArrayListExtra("choices", choices);
-            startActivityForResult(intent, GALLERY_REQUEST_CODE);
+          //  intent.putParcelableArrayListExtra("choices", choices);
+          //  startActivityForResult(intent, GALLERY_REQUEST_CODE);
+            startActivity(intent);
         });
         Button quizBtn = findViewById(R.id.buttonQuiz);
         quizBtn.setOnClickListener(view -> {
             if (choices.size() >= 3) {
                 Intent intent = new Intent(this, Quiz.class);
-                intent.putParcelableArrayListExtra("choices", choices);
+                // intent.putParcelableArrayListExtra("choices", choices);
                 startActivity(intent);
             } else {
                 Toast.makeText(this, "There isn't enough items in the gallery to play!", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(this, Gallery.class);
-                intent.putParcelableArrayListExtra("choices", choices);
-                startActivityForResult(intent, GALLERY_REQUEST_CODE);
-
+                // intent.putParcelableArrayListExtra("choices", choices);
+                // startActivityForResult(intent, GALLERY_REQUEST_CODE);
+                startActivity(intent);
             }
         });
     }
+    /*
     private void initiateGallery() {
         this.choices = new ArrayList<Choice>();
         addImageResourceToList(R.drawable.dog1, "Rico");
@@ -78,6 +83,6 @@ public class MainActivity extends AppCompatActivity {
                 setIndex();
             }
         }
-    }
+    } */
 
 }

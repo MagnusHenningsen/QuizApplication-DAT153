@@ -12,20 +12,22 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.quizapplication.ApplicationContext;
 import com.example.quizapplication.DataTypes.Choice;
 import com.example.quizapplication.R;
 
 public class newImage extends AppCompatActivity {
     private Choice choice;
-
+    private ApplicationContext appCon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_image);
+        this.appCon = (ApplicationContext) getApplicationContext();
         this.choice = null;
         Button submit = findViewById(R.id.buttonSubmit);
         submit.setOnClickListener(view -> {
-            Intent returnIntent = new Intent();
+           /* Intent returnIntent = new Intent(); */
             EditText nameText = findViewById(R.id.nameInput);
 
             if (choice != null) {
@@ -36,14 +38,22 @@ public class newImage extends AppCompatActivity {
                 } else if (choice.getName().length() < 3) {
                     Toast.makeText(this, "Name must be atleast 3 characters!", Toast.LENGTH_LONG).show();
                 } else {
+                    /*
                     returnIntent.putExtra("uri", choice.getUri());
                     returnIntent.putExtra("name", choice.getName());
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
+                    */
+                    if (appCon.addToList(choice)) {
+                        setResult(Activity.RESULT_OK, null);
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Name or Image is a duplicate!", Toast.LENGTH_LONG).show();
+                    }
                 }
             } else {
+                /*
                 setResult(Activity.RESULT_CANCELED, returnIntent);
-                finish();
+                 */
+                //finish();
             }
 
         });
@@ -68,6 +78,7 @@ public class newImage extends AppCompatActivity {
                 // Use the URI to access the document, for example, to display the image
                 displayImage(uri);
                 choice = new Choice(uri, null);
+
             }
         }
     }
