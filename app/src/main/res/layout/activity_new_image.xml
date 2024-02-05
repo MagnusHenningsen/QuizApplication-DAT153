@@ -23,7 +23,7 @@
         android:layout_width="119dp"
         android:layout_height="50dp"
         android:onClick="getImage"
-        android:text="Image"
+        android:text="@string/image"
         app:layout_constraintBottom_toTopOf="@+id/buttonSubmit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="108dp"
-        android:text="Submit"
+        android:text="@string/submit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -43,7 +43,7 @@
         android:layout_width="231dp"
         android:layout_height="73dp"
         android:ems="10"
-        android:hint="Name"
+        android:hint="@string/name_hint"
         android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/buttonAdd"
         app:layout_constraintEnd_toEndOf="parent"

@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ApplicationContext extends Application {
 
     private ArrayList<Choice> list;
-
+    private boolean HardMode = false;
     @Override
     public void onCreate() {
         super.onCreate();

@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 // intent.putParcelableArrayListExtra("choices", choices);
                 startActivity(intent);
             } else {
-                Toast.makeText(this, "There isn't enough items in the gallery to play!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getResources().getString(R.string.not_enough_items), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(this, Gallery.class);
                 // intent.putParcelableArrayListExtra("choices", choices);
                 // startActivityForResult(intent, GALLERY_REQUEST_CODE);

@@ -1,5 +1,24 @@
 <resources>
     <string name="app_name">QuizApplication</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="gallery">Gallery</string>
+    <string name="quiz">Quiz</string>
+
+    <string name="sort">Sort</string>
+    <string name="add">Add</string>
+
+    <string name="name_hint">Name</string>
+    <string name="image">Add Image</string>
+    <string name="submit">Submit</string>
+
+    <string name="reset">Reset</string>
+    <string name="played">Games played: </string>
+    <string name="won">Games won: </string>
+    <string name="option">Option</string>
+
+    <string name="submit_nothing">There is nothing to submit</string>
+    <string name="duplicate">Name or Image is a duplicate!</string>
+    <string name="name_length">Name must be at least 3 characters!</string>
+    <string name="name_required">Name is required!</string>
+    <string name="not_enough_items">There is not enough items in the gallery to play!</string>
 </resources>

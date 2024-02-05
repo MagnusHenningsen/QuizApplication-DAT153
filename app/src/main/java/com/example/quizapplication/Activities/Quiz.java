@@ -29,14 +29,16 @@ public class Quiz extends AppCompatActivity {
     private int RoundsWon = 0;
     private Random rnd = new Random();
     private ApplicationContext appCon;
-    private static final String played_text = "Games played: ";
-    private static final String won_text = "Games won: ";
+    private String played_text;
+
+    private String won_text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
         //choices = getIntent().getParcelableArrayListExtra("choices");
-
+        played_text = getResources().getString(R.string.played);
+        won_text = getResources().getString(R.string.won);
         appCon = (ApplicationContext) getApplicationContext();
         choices = appCon.getList();
         SharedPreferences pref = this.getSharedPreferences("history", MODE_PRIVATE);
@@ -76,6 +78,9 @@ public class Quiz extends AppCompatActivity {
     public void RegisterAnswer(View view, Button btn, Button[] btns, Context context) {
         String answer = btn.getText().toString();
         setButtonColors(btns);
+        for (Button b : btns) {
+            b.setEnabled(false);
+        }
         if (answer.equals(current.getName())) {
             RoundsWon++;
 
@@ -91,6 +96,9 @@ public class Quiz extends AppCompatActivity {
             public void run() {
                 resetButtonColors(btns);
                 play();
+                for (Button b : btns) {
+                    b.setEnabled(true);
+                }
             }
         }, 1000);
     }

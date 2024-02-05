@@ -33,10 +33,10 @@ public class newImage extends AppCompatActivity {
             if (choice != null) {
                 choice.setName(nameText.getText().toString());
                 if (choice.getName() == null || choice.getName().isEmpty() || choice.getName().equals("")) {
-                    Toast.makeText(this, "Name is required!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getResources().getString(R.string.name_required), Toast.LENGTH_LONG).show();
 
                 } else if (choice.getName().length() < 3) {
-                    Toast.makeText(this, "Name must be atleast 3 characters!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getResources().getString(R.string.name_length), Toast.LENGTH_LONG).show();
                 } else {
                     /*
                     returnIntent.putExtra("uri", choice.getUri());
@@ -46,14 +46,11 @@ public class newImage extends AppCompatActivity {
                         setResult(Activity.RESULT_OK, null);
                         finish();
                     } else {
-                        Toast.makeText(this, "Name or Image is a duplicate!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, getResources().getString(R.string.duplicate), Toast.LENGTH_LONG).show();
                     }
                 }
             } else {
-                /*
-                setResult(Activity.RESULT_CANCELED, returnIntent);
-                 */
-                //finish();
+                Toast.makeText(this, getResources().getString(R.string.submit_nothing), Toast.LENGTH_LONG).show();
             }
 
         });

@@ -27,7 +27,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="64dp"
-        android:text="Add" />
+        android:text="@string/add" />
 
     <Button
         android:id="@+id/sortBtn"
@@ -39,7 +39,7 @@
         android:layout_marginEnd="65dp"
         android:layout_marginBottom="64dp"
         android:layout_toStartOf="@+id/buttonAdd"
-        android:text="Sort" />
+        android:text="@string/sort" />
 
 
 </RelativeLayout>
