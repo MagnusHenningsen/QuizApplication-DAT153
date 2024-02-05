@@ -33,8 +33,9 @@ public class Gallery extends AppCompatActivity {
              */
             appCon.removeFromList(c);
             choices = appCon.getList();
+
             // adapter.notifyDataSetChanged();
-            adapter.notifyItemRemoved(c.getIndex());
+            // adapter.notifyItemRemoved(c.getIndex());
         }
     };
     /*

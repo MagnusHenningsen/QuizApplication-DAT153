@@ -57,7 +57,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
             builder.setMessage("Are you sure you want to remove this choice?");
             builder.setPositiveButton("Yes", (dialog, which) -> {
-                choices.remove(position);
+                choices.remove(choice);
                 notifyDataSetChanged();
                 this.func.accept(choice);
             });

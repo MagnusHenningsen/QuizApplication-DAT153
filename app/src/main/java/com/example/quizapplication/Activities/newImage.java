@@ -74,12 +74,17 @@ public class newImage extends AppCompatActivity {
             // The result data contains a URI for the document or directory that the user selected.
             Uri uri = null;
             if (resultData != null) {
-                uri = resultData.getData();
-                // Use the URI to access the document, for example, to display the image
-                displayImage(uri);
-                choice = new Choice(uri, null);
-
-            }
+                try {
+                    uri = resultData.getData();
+                    // Use the URI to access the document, for example, to display the image
+                    displayImage(uri);
+                    choice = new Choice(uri, null);
+                    getContentResolver().takePersistableUriPermission(uri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+                }
         }
     }
 
