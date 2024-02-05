@@ -6,9 +6,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -138,7 +142,9 @@ public class Quiz extends AppCompatActivity {
         }
         if (answer.equals(current.getName())) { // increment if correct
             RoundsWon++;
-
+            playSound(true);
+        } else {
+            playSound(false);
         }
         RoundsPlayed++;
         SaveHistory();
@@ -212,5 +218,15 @@ public class Quiz extends AppCompatActivity {
         for (int i = 0; i < buttons.length; i++) {
             buttons[i].setText(optionsSet.get(i));
         }
+    }
+    private void playSound(boolean x) {
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, x ? R.raw.happy_beep : R.raw.unhappy_beep);
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+            }
+        });
+        mediaPlayer.start();
     }
 }
