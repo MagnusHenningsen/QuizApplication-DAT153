@@ -44,9 +44,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="50dp"
-        android:layout_marginBottom="46dp"
         android:contentDescription="@string/option"
-        app:layout_constraintBottom_toTopOf="@+id/playedCounter"
+        app:layout_constraintBottom_toTopOf="@+id/timer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,11 +56,10 @@
         android:id="@+id/playedCounter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
         android:text="@string/played"
         app:layout_constraintBottom_toTopOf="@+id/wonCounter"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.43"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/quiz_current" />
 
@@ -69,11 +67,11 @@
         android:id="@+id/wonCounter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="200dp"
+        android:layout_marginBottom="100dp"
         android:text="@string/won"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintHorizontal_bias="0.41"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/playedCounter" />
 
@@ -86,4 +84,18 @@
         app:layout_constraintBottom_toTopOf="@+id/quiz_current"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/timer"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:progressTint="@color/red"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="279dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/quiz_current" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

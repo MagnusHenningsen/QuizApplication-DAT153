@@ -5,63 +5,53 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 
-import com.example.quizapplication.Adapters.MyAdapter;
+import com.example.quizapplication.Adapters.GalleryAdapter;
 import com.example.quizapplication.ApplicationContext;
-import com.example.quizapplication.DataTypes.Choice;
+import com.example.quizapplication.DataTypes.Option;
 import com.example.quizapplication.R;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class Gallery extends AppCompatActivity {
 
-    private ArrayList<Choice> choices = new ArrayList<Choice>();
+    private ArrayList<Option> choices = new ArrayList<Option>();
     private ApplicationContext appCon;
-    private MyAdapter adapter;
-    private Consumer<Choice> removeItem = new Consumer<Choice>() {
+    private GalleryAdapter adapter;
+    private Consumer<Option> removeItem = new Consumer<Option>() {
         @Override
-        public void accept(Choice c) {
-            /*
-            choices.remove(c);
-            updateChoices();
-             */
+        public void accept(Option c) {
+            // callback method we sent into the adapter, will remove what was removed in the adapter in our global list aswell
             appCon.removeFromList(c);
             choices = appCon.getList();
-
-            // adapter.notifyDataSetChanged();
-            // adapter.notifyItemRemoved(c.getIndex());
         }
     };
-    /*
-    private void updateChoices() {
-        Intent returnIntent = new Intent();
-        returnIntent.putParcelableArrayListExtra("UpdatedChoices", choices);
-        setResult(RESULT_OK, returnIntent);
-    }
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
         appCon = (ApplicationContext) getApplicationContext();
+        // collect list
         choices = appCon.getList();
+        // set the view
         RecyclerView recyclerView = findViewById(R.id.imagesRecyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 3)); // 3 columns
-
-        adapter = new MyAdapter(choices, removeItem);
+        // span of 3 columns
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        // pass in the list and a function to remove items
+        adapter = new GalleryAdapter(choices, removeItem);
         Button sortBtn = this.findViewById(R.id.sortBtn);
         sortBtn.setOnClickListener(v -> {
-            adapter.notifyDataSetChanged();
             adapter.Sort();
+            adapter.notifyDataSetChanged();
         });
+        // attach adapter to rec. view
         recyclerView.setAdapter(adapter);
         Button addBtn = this.findViewById(R.id.buttonAdd);
+        // start activity to collect new choice
+        // code 101 is just a random number, lets us control the callback of the activity
         addBtn.setOnClickListener(view -> {
             Intent intent = new Intent(this, newImage.class);
             startActivityForResult(intent, 101);
@@ -75,31 +65,16 @@ public class Gallery extends AppCompatActivity {
 
         if (requestCode == 101 && resultCode == RESULT_OK) {
             super.onActivityResult(requestCode, resultCode, data);
-
+            // if the activity was a success we update the recylcerview
             if (requestCode == 101 && resultCode == RESULT_OK) {
-                // Create the new choice object
-                /*
-                String resultString = data.getStringExtra("name");
-                Uri resultUri = data.getParcelableExtra("uri");
+                RecyclerView recyclerView = findViewById(R.id.imagesRecyclerView);
+                recyclerView.setLayoutManager(new GridLayoutManager(this, 3)); // 3 columns
+                this.choices = appCon.getList();
+                adapter = new GalleryAdapter(choices, removeItem);
 
-                // Persistable permission
-                if (resultUri != null) {
-                    getContentResolver().takePersistableUriPermission(resultUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                }
-
-                Choice choice = new Choice(resultUri, resultString);
-
-                choices.add(choice);
-                updateChoices();
-                 */
-               // adapter.notifyDataSetChanged();
+                recyclerView.setAdapter(adapter); // update images
             }
-            RecyclerView recyclerView = findViewById(R.id.imagesRecyclerView);
-            recyclerView.setLayoutManager(new GridLayoutManager(this, 3)); // 3 columns
-            this.choices = appCon.getList();
-            adapter = new MyAdapter(choices, removeItem);
 
-            recyclerView.setAdapter(adapter); // update images
 
         }
     }

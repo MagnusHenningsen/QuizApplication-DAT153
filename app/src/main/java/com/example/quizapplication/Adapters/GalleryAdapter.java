@@ -1,5 +1,6 @@
 package com.example.quizapplication.Adapters;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,60 +9,60 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.quizapplication.DataTypes.Choice;
+import com.example.quizapplication.DataTypes.Option;
 import com.example.quizapplication.R;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private ArrayList<Choice> choices; // List of drawable resource IDs
-    private Consumer<Choice> func;
+/** @noinspection ComparatorCombinators*/
+public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
+    private final ArrayList<Option> choices; // List of drawable resource IDs
+    private final Consumer<Option> func;
 
     private boolean Ascending = true;
-    public MyAdapter(ArrayList<Choice> imageResourceIds, Consumer<Choice> func) {
+    public GalleryAdapter(ArrayList<Option> imageResourceIds, Consumer<Option> func) {
         this.choices = new ArrayList<>(imageResourceIds);
         this.choices.sort((x, y) -> x.getName().compareTo(y.getName()));
 
         this.func = func;
     }
+    @SuppressLint("NotifyDataSetChanged")
     public void Sort() {
-        if (Ascending) {
-            this.choices.sort((x, y) -> y.getName().compareTo(x.getName()));
-            Ascending = false;
-        } else {
-            this.choices.sort((x, y) -> x.getName().compareTo(y.getName()));
-            Ascending = true;
-        }
+        Collections.reverse(choices); // the list should always be sorted one way or another, so we can just reverse
         for (int i = 0; i < choices.size(); i++) {
             choices.get(i).setIndex(i);
         }
         notifyDataSetChanged();
     }
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item, parent, false);
         return new ViewHolder(view);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Choice choice = choices.get(position);
-        holder.imageView.setImageURI(choice.getUri());
-        holder.textView.setText(choice.getName());
+        Option choice = choices.get(position); // get the item in question
+        holder.imageView.setImageURI(choice.getUri()); // set the image
+        holder.textView.setText(choice.getName()); // set the text
+        // onclicklistener for the frame, meaning the entire "item"
         holder.frame.setOnClickListener(v -> {
+            // create an alert incase of accidental click
             AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
             builder.setMessage("Are you sure you want to remove this choice?");
             builder.setPositiveButton("Yes", (dialog, which) -> {
-                choices.remove(choice);
+                choices.remove(choice); // remove from list
                 notifyDataSetChanged();
-                this.func.accept(choice);
+                this.func.accept(choice); // callback function to remove it from global list aswell
             });
-            builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+            builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss()); // do nothing if no
             AlertDialog dialog = builder.create();
             dialog.show();
         });

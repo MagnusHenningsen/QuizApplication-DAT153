@@ -13,11 +13,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.quizapplication.ApplicationContext;
-import com.example.quizapplication.DataTypes.Choice;
+import com.example.quizapplication.DataTypes.Option;
 import com.example.quizapplication.R;
 
 public class newImage extends AppCompatActivity {
-    private Choice choice;
+    private Option choice;
     private ApplicationContext appCon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,25 +27,23 @@ public class newImage extends AppCompatActivity {
         this.choice = null;
         Button submit = findViewById(R.id.buttonSubmit);
         submit.setOnClickListener(view -> {
-           /* Intent returnIntent = new Intent(); */
             EditText nameText = findViewById(R.id.nameInput);
-
+            // if the choice is null we give a toast message to explain the situation
             if (choice != null) {
                 choice.setName(nameText.getText().toString());
+                // if the name is null or "illegal" we give an appropriate message
                 if (choice.getName() == null || choice.getName().isEmpty() || choice.getName().equals("")) {
                     Toast.makeText(this, getResources().getString(R.string.name_required), Toast.LENGTH_LONG).show();
 
                 } else if (choice.getName().length() < 3) {
                     Toast.makeText(this, getResources().getString(R.string.name_length), Toast.LENGTH_LONG).show();
                 } else {
-                    /*
-                    returnIntent.putExtra("uri", choice.getUri());
-                    returnIntent.putExtra("name", choice.getName());
-                    */
+                    // add to global list
                     if (appCon.addToList(choice)) {
                         setResult(Activity.RESULT_OK, null);
                         finish();
                     } else {
+                        // duplicate warning and denied addition
                         Toast.makeText(this, getResources().getString(R.string.duplicate), Toast.LENGTH_LONG).show();
                     }
                 }
@@ -57,9 +55,11 @@ public class newImage extends AppCompatActivity {
     }
 
     public void getImage(View view) {
+        // pass our intent to open a document
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        // we only want those of the category openable
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*"); // Use image/* for images of any type.
+        intent.setType("image/*"); // type
         startActivityForResult(intent, 42, null);
     }
 
@@ -73,9 +73,12 @@ public class newImage extends AppCompatActivity {
             if (resultData != null) {
                 try {
                     uri = resultData.getData();
-                    // Use the URI to access the document, for example, to display the image
+                    // display the given image
                     displayImage(uri);
-                    choice = new Choice(uri, null);
+
+                    choice = new Option(uri, null);
+                    // needed lasting uri permission, otherwise we got errors when deleting for some reason
+                    // might not be needed anymore
                     getContentResolver().takePersistableUriPermission(uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 } catch (SecurityException e) {

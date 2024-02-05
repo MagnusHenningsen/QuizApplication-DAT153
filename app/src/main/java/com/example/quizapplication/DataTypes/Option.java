@@ -4,19 +4,19 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Choice implements Parcelable {
+public class Option implements Parcelable {
 
     private Integer index;
     private Uri uri;
     private String name;
 
     // Constructors
-    public Choice(Uri uri, String name) {
+    public Option(Uri uri, String name) {
         this.uri = uri;
         this.name = name;
     }
 
-    public Choice(Integer index, Uri uri, String name) {
+    public Option(Integer index, Uri uri, String name) {
         this.index = index;
         this.uri = uri;
         this.name = name;
@@ -48,21 +48,21 @@ public class Choice implements Parcelable {
     }
 
     // Parcelable Implementation
-    protected Choice(Parcel in) {
+    protected Option(Parcel in) {
         index = (in.readByte() == 0) ? null : in.readInt();
         uri = in.readParcelable(Uri.class.getClassLoader());
         name = in.readString();
     }
 
-    public static final Creator<Choice> CREATOR = new Creator<Choice>() {
+    public static final Creator<Option> CREATOR = new Creator<Option>() {
         @Override
-        public Choice createFromParcel(Parcel in) {
-            return new Choice(in);
+        public Option createFromParcel(Parcel in) {
+            return new Option(in);
         }
 
         @Override
-        public Choice[] newArray(int size) {
-            return new Choice[size];
+        public Option[] newArray(int size) {
+            return new Option[size];
         }
     };
 
