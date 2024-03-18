@@ -1,6 +1,7 @@
 package com.example.quizapplication.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -12,30 +13,38 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.quizapplication.ApplicationContext;
-import com.example.quizapplication.DataTypes.Option;
+import com.example.quizapplication.Data.Option;
+import com.example.quizapplication.Data.OptionViewModel;
 import com.example.quizapplication.R;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     ArrayList<Option> choices = new ArrayList<Option>();
+    private OptionViewModel optionViewModel;
+
     // private final int GALLERY_REQUEST_CODE = 1;
     // private final int QUIZ_REQUEST_CODE = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        optionViewModel = new ViewModelProvider(this).get(OptionViewModel.class);
         setContentView(R.layout.activity_main);
         Button galleryBtn = findViewById(R.id.buttonGallery);
         ApplicationContext appCon = (ApplicationContext) getApplicationContext();
-        choices = appCon.getList();
+        appCon.setViewModelHolder(optionViewModel);
         // on click listeners
         galleryBtn.setOnClickListener(view -> {
             Intent intent = new Intent(this, Gallery.class);
             startActivity(intent);
         });
+        appCon.optionViewModel.getAllOptions().observe(this, list -> {
+            this.choices = new ArrayList<>(list);
+            appCon.update(list);
+        });
         Button quizBtn = findViewById(R.id.buttonQuiz);
         quizBtn.setOnClickListener(view -> {
-            if (choices.size() >= 3) {
+            if (this.choices.size() >= 3) {
                 Intent intent = new Intent(this, Quiz.class);
                 startActivity(intent);
             } else {

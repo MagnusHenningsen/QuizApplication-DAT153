@@ -3,74 +3,84 @@ package com.example.quizapplication;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.net.Uri;
+import android.util.Log;
 
-import com.example.quizapplication.DataTypes.Option;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.quizapplication.Data.Option;
+import com.example.quizapplication.Data.OptionViewModel;
+import com.example.quizapplication.Data.UriTypeConverter;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ApplicationContext extends Application {
 
-    private ArrayList<Option> list;
 
-
+    public OptionViewModel optionViewModel;
     private AtomicBoolean HardMode;
+
+    public ArrayList<Option> options = new ArrayList<>();
     @Override
     public void onCreate() {
         super.onCreate();
-        // instantiate the global list
-        this.list = new ArrayList<>();
         HardMode = new AtomicBoolean(false);
-        addImageResourceToList(R.drawable.dog1, "Rico");
-        addImageResourceToList(R.drawable.dog2, "Kiki");
-        addImageResourceToList(R.drawable.dog3, "Baxter");
-        setIndex();
+
     }
-    private void setIndex() {
-        for (int i = 0; i < list.size(); i++) {
-            list.get(i).setIndex(i);
-        }
+
+    public void setViewModelHolder(OptionViewModel ovm) {
+        this.optionViewModel = ovm;
+
     }
-    public void setList(ArrayList<Option> list) {
-        this.list = list;
+    public void update(List<Option> list) {
+        this.options.clear();
+        this.options.addAll(list);
     }
     public ArrayList<Option> getList() {
-        return this.list;
+         ArrayList list = new ArrayList<>(optionViewModel.getAllOptions().getValue());
+         return list;
     }
     public boolean removeFromList(Option c) {
-        return list.remove(c);
+        optionViewModel.delete(c);
+        return true;
     }
     public boolean addToList(Option c) {
         AtomicBoolean nameIsDupe = new AtomicBoolean(false);
         AtomicBoolean uriIsDupe = new AtomicBoolean(false);
-        // check for duplications in the list
-        // only using atomicboolean due to java demanding it if you want to use forEach, and we are stubborn
-        list.stream().forEach(x -> {
-            if (x.getName().toUpperCase().equals(c.getName().toUpperCase())) {
-                nameIsDupe.set(true);
-                //Log.i("Name dupe", "Name is duplicate");
+
+        // Assuming getAllOptions() can provide a synchronous result; otherwise, you need a different approach
+        List<Option> list = optionViewModel.getAllOptions().getValue(); // Make sure this is not null
+        if (list != null) {
+            list.forEach(x -> {
+                if (x.getName().equalsIgnoreCase(c.getName())) {
+                    nameIsDupe.set(true);
+                }
+                if (x.getUri().equals(c.getUri())) {
+                    uriIsDupe.set(true);
+                }
+            });
+
+            if (!nameIsDupe.get() && !uriIsDupe.get()) {
+
+                Log.i("length", this.getList().size()+"");
+                this.optionViewModel.insert(c);
+                Log.i("inserted", "inserted "+c.getName());
+                Log.i("length", this.getList().size()+"");
+                try {
+                    wait(200);
+                } catch (Exception e) {
+                    Log.i("Exception", e.toString());
+                }
+                Log.i("length", this.getList().size()+"");
+                return true; // Item was added successfully
             }
-            if (x.getUri().equals(c.getUri())) {
-                uriIsDupe.set(true);
-                //Log.i("Uri dupe", "URI is duplicate");
-            }
-        });
-        if (!nameIsDupe.get() && !uriIsDupe.get()) {
-            //Log.i("AppCOn", "Adding to list");
-            return this.list.add(c);
         }
-        return false;
+
+        return false; // Either list is null, or duplicates were found
     }
-    private void addImageResourceToList(int imageResourceId, String name) {
-        // collect preset image and return the new option
-        Uri imageUri = new Uri.Builder()
-                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE) // "android.resource"
-                .authority(getResources().getResourcePackageName(imageResourceId))
-                .appendPath(getResources().getResourceTypeName(imageResourceId))
-                .appendPath(getResources().getResourceEntryName(imageResourceId))
-                .build();
-        list.add(new Option(imageUri, name));
-    }
+
+
     // get hardcore
     public boolean isHardMode() {
         return HardMode.get();

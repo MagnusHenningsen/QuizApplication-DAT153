@@ -13,7 +13,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.quizapplication.ApplicationContext;
-import com.example.quizapplication.DataTypes.Option;
+import com.example.quizapplication.Data.Option;
+import com.example.quizapplication.Data.UriTypeConverter;
 import com.example.quizapplication.R;
 
 public class newImage extends AppCompatActivity {
@@ -76,7 +77,7 @@ public class newImage extends AppCompatActivity {
                     // display the given image
                     displayImage(uri);
 
-                    choice = new Option(uri, null);
+                    choice = new Option(UriTypeConverter.fromUri(uri), null);
                     // needed lasting uri permission, otherwise we got errors when deleting for some reason
                     // might not be needed anymore
                     getContentResolver().takePersistableUriPermission(uri,

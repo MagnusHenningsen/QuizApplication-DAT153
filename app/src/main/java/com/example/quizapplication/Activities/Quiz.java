@@ -6,13 +6,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,7 +18,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.quizapplication.ApplicationContext;
-import com.example.quizapplication.DataTypes.Option;
+import com.example.quizapplication.Data.Option;
+import com.example.quizapplication.Data.UriTypeConverter;
 import com.example.quizapplication.R;
 
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ public class Quiz extends AppCompatActivity {
         played_text = getResources().getString(R.string.played);
         won_text = getResources().getString(R.string.won);
         appCon = (ApplicationContext) getApplicationContext();
-        choices = appCon.getList();
+        choices = appCon.options;
         SharedPreferences pref = this.getSharedPreferences("history", MODE_PRIVATE);
         RoundsPlayed = pref.getInt("played", 0);
         RoundsWon = pref.getInt("won", 0);
@@ -162,11 +161,12 @@ public class Quiz extends AppCompatActivity {
     }
     private void play() {
         do { // make sure the chosen option is not the same as previous, chose at random
+            Log.i("choices: ", choices.size() + " ");
             current = choices.get(rnd.nextInt(choices.size()));
         } while (current == previous);
         previous = current; // set this up for the next round
         ImageView imageView = findViewById(R.id.quiz_current);
-        imageView.setImageURI(current.getUri()); // set image
+        imageView.setImageURI(UriTypeConverter.toUri(current.getUri())); // set image
         TextView played = findViewById(R.id.playedCounter);
         TextView won = findViewById(R.id.wonCounter);
         played.setText(played_text + " "+ RoundsPlayed);
