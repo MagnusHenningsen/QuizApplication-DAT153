@@ -29,12 +29,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Quiz extends AppCompatActivity {
 
-    ArrayList<Option> choices = new ArrayList<>();
-    private Option current = null;
+    ArrayList<Option> choices;
+    private ArrayList<Option> optionsSet = new ArrayList<>();
     private Option previous = null;
     private int RoundsPlayed = 0;
     private int RoundsWon = 0;
-    private Random rnd = new Random();
+    private final Random rnd = new Random();
     private ApplicationContext appCon;
     private String played_text;
     private ProgressBar pb;
@@ -70,13 +70,11 @@ public class Quiz extends AppCompatActivity {
             public void onTick(long millisUntilFinished) { // pretty colors :)
                 progress.set(progress.get() +1);
                 pb.setProgress(progress.get());
-                float percentage = (float) progress.get() / (total_time/50);
+                float percentage = (float) progress.get() / ((float) total_time /50);
 
                 int blendedColor = blendColors(Color.RED, Color.GREEN, percentage);
+                pb.setProgressTintList(ColorStateList.valueOf(blendedColor));
 
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    pb.setProgressTintList(ColorStateList.valueOf(blendedColor));
-                }
             }
             public void onFinish() { // increment rounds played, save to history and start next round
                 RoundsPlayed++;
@@ -100,17 +98,17 @@ public class Quiz extends AppCompatActivity {
         resetButtonColors(btns); // set all button colors to default color
         // set on click listeners to each option button, each also cancel the timer if needed
         option1.setOnClickListener(v -> {
-            RegisterAnswer(v, option1, btns, this);
+            RegisterAnswer(v, option1, btns);
             progress.set(0);
             timer.cancel();
         });
         option2.setOnClickListener(v -> {
-            RegisterAnswer(v, option2, btns, this);
+            RegisterAnswer(v, option2, btns);
             progress.set(0);
             timer.cancel();
         });
         option3.setOnClickListener(v -> {
-            RegisterAnswer(v, option3, btns, this);
+            RegisterAnswer(v, option3, btns);
             progress.set(0);
             timer.cancel();
         });
@@ -127,6 +125,16 @@ public class Quiz extends AppCompatActivity {
         play();
 
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        appCon.saveState = true;
+        Option[] temp = new Option[3];
+        int i = 0;
+        while (i <= 3) {
+            temp[i] = optionsSet.get(i);
+        }
+    }
     public void SaveHistory() { // get sharedpreferences and save to it
         SharedPreferences pref = this.getSharedPreferences("history", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
@@ -134,13 +142,13 @@ public class Quiz extends AppCompatActivity {
         editor.putInt("won", RoundsWon);
         editor.apply();
     }
-    public void RegisterAnswer(View view, Button btn, Button[] btns, Context context) {
+    public void RegisterAnswer(View view, Button btn, Button[] btns) {
         String answer = btn.getText().toString();
         setButtonColors(btns); // set the button colors to give feedback
         for (Button b : btns) {
             b.setEnabled(false); // disable all option buttons while doing so, this is to prevent spam
         }
-        if (answer.equals(current.getName())) { // increment if correct
+        if (answer.equals(appCon.getCurrent().getName())) { // increment if correct
             RoundsWon++;
             playSound(true);
         } else {
@@ -160,51 +168,53 @@ public class Quiz extends AppCompatActivity {
         }, 1000);
     }
     private void play() {
-        do { // make sure the chosen option is not the same as previous, chose at random
-            Log.i("choices: ", choices.size() + " ");
-            current = choices.get(rnd.nextInt(choices.size()));
-        } while (current == previous);
-        previous = current; // set this up for the next round
+        if (!appCon.saveState) {
+            do { // make sure the chosen option is not the same as previous, chosen at random
+                Log.i("choices: ", choices.size() + " ");
+                appCon.setCurrent(choices.get(rnd.nextInt(choices.size())));
+            } while (appCon.getCurrent() == previous);
+        }
+        previous = appCon.getCurrent(); // set this up for the next round
         ImageView imageView = findViewById(R.id.quiz_current);
-        imageView.setImageURI(UriTypeConverter.toUri(current.getUri())); // set image
+        imageView.setImageURI(UriTypeConverter.toUri(appCon.getCurrent().getUri())); // set image
         TextView played = findViewById(R.id.playedCounter);
         TextView won = findViewById(R.id.wonCounter);
         played.setText(played_text + " "+ RoundsPlayed);
         won.setText(won_text + " "+ RoundsWon);
-        setOptions(current); // set the different options for the buttons
+        setOptions(appCon.getCurrent()); // set the different options for the buttons
         if (appCon.isHardMode()) { // start timer here if hardmode
             timer.start();
         }
     }
     private void resetButtonColors(Button[] btns) { // sets all buttons to same color
-        for (int i = 0; i < btns.length; i++) {
-            btns[i].setBackgroundColor(getResources().getColor(R.color.buttonColor));
-            btns[i].setHeight(40);
+        for (Button btn : btns) {
+            btn.setBackgroundColor(getResources().getColor(R.color.buttonColor));
+            btn.setHeight(40);
         }
     }
     private void setButtonColors(Button[] btns) { // sets the correct option green, rest red
-        for (int i = 0; i < btns.length; i++) {
-            if (btns[i].getText().toString().equals(current.getName())) {
-                btns[i].setBackgroundColor(getResources().getColor(R.color.green));
-                btns[i].setHeight(40);
+        for (Button btn : btns) {
+            if (btn.getText().toString().equals(appCon.getCurrent().getName())) {
+                btn.setBackgroundColor(getResources().getColor(R.color.green));
+                btn.setHeight(40);
             } else {
-                btns[i].setBackgroundColor(getResources().getColor(R.color.red));
-                btns[i].setHeight(40);
+                btn.setBackgroundColor(getResources().getColor(R.color.red));
+                btn.setHeight(40);
             }
         }
     }
 
 
     private void setOptions(Option current) {
-        ArrayList<String> optionsSet = new ArrayList<>();
+        optionsSet = new ArrayList<>();
         // add the correct answer to the list
-        optionsSet.add(current.getName());
+        optionsSet.add(current);
 
         while (optionsSet.size() < 3) { // Now we need 3 unique options including the correct one
             int randomIndex = rnd.nextInt(appCon.getList().size()); // random int 0 -> n
             Option r = choices.get(randomIndex); // get the chosen option
-            if (!optionsSet.contains(r.getName())) { // check if it has already been picked
-                optionsSet.add(r.getName());
+            if (!optionsSet.contains(r)) { // check if it has already been picked
+                optionsSet.add(r);
             }
         }
         // Shuffle the list to randomize the position of the correct answer
@@ -217,17 +227,18 @@ public class Quiz extends AppCompatActivity {
         // Assign texts to buttons
         Button[] buttons = {option1, option2, option3};
         for (int i = 0; i < buttons.length; i++) {
-            buttons[i].setText(optionsSet.get(i));
+            if (!appCon.saveState) {
+                buttons[i].setText(optionsSet.get(i).getName());
+            } else {
+                buttons[i].setText(appCon.SavedOptions[i].getName());
+            }
         }
+        appCon.saveState = false;
+        appCon.SavedOptions = new Option[3];
     }
     private void playSound(boolean x) {
         MediaPlayer mediaPlayer = MediaPlayer.create(this, x ? R.raw.happy_beep : R.raw.unhappy_beep);
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mp.release();
-            }
-        });
+        mediaPlayer.setOnCompletionListener(MediaPlayer::release);
         mediaPlayer.start();
     }
 }

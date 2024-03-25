@@ -55,6 +55,10 @@ dependencies {
     implementation("androidx.room:room-guava:2.6.1")
     testImplementation("androidx.room:room-testing:2.6.1")
     implementation("androidx.room:room-paging:2.6.1")
-
+    androidTestImplementation("com.google.truth:truth:1.4.2")
+    debugImplementation("androidx.test:monitor:1.6.1")
+    debugImplementation("androidx.fragment:fragment-testing-manifest:1.6.0-alpha04")
+    androidTestImplementation("androidx.fragment:fragment-testing:1.6.0-alpha04")
+    androidTestImplementation("androidx.test:runner:1.1.0")
 
 }

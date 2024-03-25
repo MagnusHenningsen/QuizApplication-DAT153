@@ -20,7 +20,10 @@ public class ApplicationContext extends Application {
 
     public OptionViewModel optionViewModel;
     private AtomicBoolean HardMode;
+    private Option Current = null;
+    public boolean saveState = false;
 
+    public Option[] SavedOptions = new Option[3];
     public ArrayList<Option> options = new ArrayList<>();
     @Override
     public void onCreate() {
@@ -28,7 +31,12 @@ public class ApplicationContext extends Application {
         HardMode = new AtomicBoolean(false);
 
     }
-
+    public void setCurrent(Option option) {
+        this.Current = option;
+    }
+    public Option getCurrent() {
+        return this.Current;
+    }
     public void setViewModelHolder(OptionViewModel ovm) {
         this.optionViewModel = ovm;
 
