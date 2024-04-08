@@ -22,5 +22,6 @@ NB! Burde brukes i darkmode, ellers ser man ikkje tekst under bilder i galleriet
 > Sets the mock URI as result data from the next ACTION_OPEN_DOCUMENT intent
 > Clicks the button that will use this intent to collect an image
 > Clicks the submit button
-> Compares the current size of the image list with the previous size, if the image didn't exist before, it should return true
+> Compares the current size of the image list with the previous size
+>> if the image didn't exist before, it should return true
 ![Gallery Test Result](GalleryTestResult.png)
