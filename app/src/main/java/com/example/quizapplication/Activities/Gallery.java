@@ -10,10 +10,11 @@ import android.widget.Button;
 
 import com.example.quizapplication.Adapters.GalleryAdapter;
 import com.example.quizapplication.ApplicationContext;
-import com.example.quizapplication.DataTypes.Option;
+import com.example.quizapplication.Data.Option;
 import com.example.quizapplication.R;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class Gallery extends AppCompatActivity {
@@ -26,21 +27,27 @@ public class Gallery extends AppCompatActivity {
         public void accept(Option c) {
             // callback method we sent into the adapter, will remove what was removed in the adapter in our global list aswell
             appCon.removeFromList(c);
-            choices = appCon.getList();
+
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
         appCon = (ApplicationContext) getApplicationContext();
         // collect list
-        choices = appCon.getList();
+
         // set the view
         RecyclerView recyclerView = findViewById(R.id.imagesRecyclerView);
         // span of 3 columns
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         // pass in the list and a function to remove items
+
+        appCon.optionViewModel.getAllOptions().observe(this, list -> {
+            adapter.updateList(new ArrayList<>(list));
+            appCon.update(list);
+        });
         adapter = new GalleryAdapter(choices, removeItem);
         Button sortBtn = this.findViewById(R.id.sortBtn);
         sortBtn.setOnClickListener(v -> {
@@ -67,12 +74,8 @@ public class Gallery extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
             // if the activity was a success we update the recylcerview
             if (requestCode == 101 && resultCode == RESULT_OK) {
-                RecyclerView recyclerView = findViewById(R.id.imagesRecyclerView);
-                recyclerView.setLayoutManager(new GridLayoutManager(this, 3)); // 3 columns
-                this.choices = appCon.getList();
-                adapter = new GalleryAdapter(choices, removeItem);
 
-                recyclerView.setAdapter(adapter); // update images
+                adapter.notifyDataSetChanged(); // Notify the adapter to refresh the view
             }
 
 

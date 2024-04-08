@@ -8,20 +8,21 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.example.quizapplication.Data.UriTypeConverter;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.quizapplication.DataTypes.Option;
+import com.example.quizapplication.Data.Option;
 import com.example.quizapplication.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 /** @noinspection ComparatorCombinators*/
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
-    private final ArrayList<Option> choices; // List of drawable resource IDs
+    private ArrayList<Option> choices; // List of drawable resource IDs
     private final Consumer<Option> func;
 
     private boolean Ascending = true;
@@ -31,12 +32,17 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
         this.func = func;
     }
+
+    public void updateList(List<Option> newList) {
+        choices.clear(); // Clear current list
+        choices.addAll(newList); // Add all from new list
+        this.choices.sort((x, y) -> x.getName().compareTo(y.getName())); // Sort if needed
+        notifyDataSetChanged(); // Notify the adapter to refresh
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     public void Sort() {
         Collections.reverse(choices); // the list should always be sorted one way or another, so we can just reverse
-        for (int i = 0; i < choices.size(); i++) {
-            choices.get(i).setIndex(i);
-        }
         notifyDataSetChanged();
     }
     @NonNull
@@ -50,7 +56,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Option choice = choices.get(position); // get the item in question
-        holder.imageView.setImageURI(choice.getUri()); // set the image
+        holder.imageView.setImageURI(UriTypeConverter.toUri(choice.getUri())); // set the image
         holder.textView.setText(choice.getName()); // set the text
         // onclicklistener for the frame, meaning the entire "item"
         holder.frame.setOnClickListener(v -> {
