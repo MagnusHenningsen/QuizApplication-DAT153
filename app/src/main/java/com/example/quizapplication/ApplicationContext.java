@@ -56,9 +56,7 @@ public class ApplicationContext extends Application {
     public boolean addToList(Option c) {
         AtomicBoolean nameIsDupe = new AtomicBoolean(false);
         AtomicBoolean uriIsDupe = new AtomicBoolean(false);
-
-        // Assuming getAllOptions() can provide a synchronous result; otherwise, you need a different approach
-        List<Option> list = optionViewModel.getAllOptions().getValue(); // Make sure this is not null
+        List<Option> list = optionViewModel.getAllOptions().getValue();
         if (list != null) {
             list.forEach(x -> {
                 if (x.getName().equalsIgnoreCase(c.getName())) {

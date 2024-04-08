@@ -60,5 +60,8 @@ dependencies {
     debugImplementation("androidx.fragment:fragment-testing-manifest:1.6.0-alpha04")
     androidTestImplementation("androidx.fragment:fragment-testing:1.6.0-alpha04")
     androidTestImplementation("androidx.test:runner:1.1.0")
+    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.3.1")
+
 
 }
