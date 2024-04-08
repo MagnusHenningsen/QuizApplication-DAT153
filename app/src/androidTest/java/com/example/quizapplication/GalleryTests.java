@@ -42,35 +42,28 @@ public class GalleryTests {
 
     @Test
     public void testActivityResultWithImage() {
-        // Start with MainActivity
-        ActivityScenario.launch(MainActivity.class);
-        onView(withId(R.id.buttonGallery)).perform(click());
-
-        // Now in Gallery activity, set up your ViewModel and mock Intent as before
         ApplicationContext appcon = (ApplicationContext) InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
         appcon.setViewModelHolder(new ViewModelProvider(main.getActivity()).get(OptionViewModel.class));
-
+        ActivityScenario.launch(Gallery.class);
+        int start  =appcon.getList().size();
         Intent resultData = new Intent();
         Uri mockImageUri = Uri.parse("content://com.example.app/mock_image");
         resultData.setData(mockImageUri);
         intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
 
-        // Simulate clicking the "Add" button to add an image
         onView(withId(R.id.buttonAdd)).perform(click());
 
-        // Enter a mock name into the EditText
         String mockName = "Mock Name";
         onView(withId(R.id.nameInput)).perform(typeText(mockName), closeSoftKeyboard());
-        // Stub the intent for image selection
+
         intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWith(
                 new Instrumentation.ActivityResult(Activity.RESULT_OK, new Intent().setData(mockImageUri))
         );
 
-        // Perform the click that should trigger the image selection intent
         onView(withId(R.id.buttonAdd)).perform(click());
-        // Click the "Submit" button
         onView(withId(R.id.buttonSubmit)).perform(click());
-        // Assert your expected outcomes here
+        int end = appcon.getList().size();
+        assertEquals(start + 1, end);
     }
 }
 
