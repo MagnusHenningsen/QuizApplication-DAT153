@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.Intents;
 
@@ -28,25 +29,25 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
 import com.example.quizapplication.Activities.MainActivity;
+import com.example.quizapplication.Activities.Quiz;
 import com.example.quizapplication.Data.Option;
+import com.example.quizapplication.Data.OptionViewModel;
 
 
 @RunWith(AndroidJUnit4.class)
 public class EspressoTests {
 
     @Rule
-    public IntentsTestRule<MainActivity> intentsTestRule = new IntentsTestRule<>(MainActivity.class);
+    public IntentsTestRule<MainActivity> main = new IntentsTestRule<>(MainActivity.class);
 
-    @Before
-    public void setUp() {
-        ActivityScenario.launch(MainActivity.class);
-    }
     @Test
     public void testScoreUpdate() {
         // Click on the button to navigate to Quiz activity
-        onView(withId(R.id.buttonQuiz)).perform(click());
+        // onView(withId(R.id.buttonQuiz)).perform(click());
 
         ApplicationContext appcon = (ApplicationContext) InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
+        appcon.setViewModelHolder(new ViewModelProvider(main.getActivity()).get(OptionViewModel.class));
+        ActivityScenario.launch(Quiz.class);
         Option current = appcon.getCurrent();
 
         // Retrieve SharedPreferences before interaction
