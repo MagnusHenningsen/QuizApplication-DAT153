@@ -25,3 +25,9 @@ NB! Burde brukes i darkmode, ellers ser man ikkje tekst under bilder i galleriet
 > 9. Compares the current size of the image list with the previous size
 >> 9.1 if the image didn't exist before, it should return true
 ![Gallery Test Result](GalleryTestResult.png)
+# APKs
+> The main apk being used seems to be app-debug.apk
+> The output seems to give me all details about the application, including the manifest file, resource files and similar.
+> The command also produced alot of 'smali' folders, which I don't know what are.
+>> in short: The decode command seems to return the reversed build version of the app.
+>> Meaning android studio builds it to something android will understand, debug recovers the files to some degree, making it readable I assume.
